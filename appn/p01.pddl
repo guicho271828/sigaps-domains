@@ -1,0 +1,6 @@
+(define (problem network)
+ (:domain appn)
+ (:init (static-true) (breaker-state-is-unknown breaker_x1_x2) (breaker-ar-status-is-unknown breaker_x1_x2) (matches-4 obs1570 command breaker_x1_x2 cb_state closed) (pending obs1570) (matches-3 obs1571 breaker_x1_x2 cb_state closed) (future obs1571) (precedes obs1571 obs1570) (matches-3 obs1572 breaker_x1_x2 cb_state abnormal) (future obs1572) (precedes obs1572 obs1571) (delay-trip-wait obs1572 obs1571) (delay-trip-wait obs1572 obs1570) (matches-3 obs1573 breaker_x1_x2 cb_state closed) (future obs1573) (precedes obs1573 obs1572) (delay-trip-wait obs1573 obs1572) (delay-short-time obs1573 obs1571) (delay-short-time obs1573 obs1570) (matches-3 obs1574 breaker_x1_x2 cb_state abnormal) (future obs1574) (precedes obs1574 obs1573) (delay-short-time obs1574 obs1572) (delay-trip-wait obs1574 obs1573) (not-breaker-auto-reclose-lockout breaker_x1_x2) (= (total-cost) 0))
+ (:goal (and (observed obs1570) (observed obs1571) (observed obs1572) (observed obs1573) (observed obs1574)))
+ (:metric minimize (total-cost))
+)

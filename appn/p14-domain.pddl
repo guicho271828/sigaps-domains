@@ -1,0 +1,951 @@
+(define (domain appn)
+ (:types breaker - branch branch - component disconnector - branch line - branch transformer - branch series_cap - branch component - observable generator - component bus - component observable - object message - observable low_level - level level - observable high_level - level observation - object count - object hypothesis - object)
+ (:predicates (static-true) (line-isolators-2 ?l - line ?b1 - breaker ?b2 - breaker) (line-isolators-3 ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker) (line-isolators-4 ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker) (line-isolator ?b - breaker ?l - line) (adjacent ?l - line ?b - bus) (generator-isolator ?bk - breaker ?bu - bus) (generator-attached-to ?g - generator ?b - bus) (capacitor-switch ?b - breaker) (reactor-switch ?b - breaker) (capacitor-switched-in ?o - observation) (capacitor-switched-out ?o - observation) (reactor-switched-in ?o - observation) (reactor-switched-out ?o - observation) (matches-2 ?o - observation ?a1 - observable ?a2 - observable) (matches-3 ?o - observation ?a1 - observable ?a2 - observable ?a3 - observable) (matches-4 ?o - observation ?a1 - observable ?a2 - observable ?a3 - observable ?a4 - observable) (future ?o - observation) (pending ?o - observation) (observed ?o - observation) (precedes ?o - observation ?o1 - observation) (delay-trip-wait ?o - observation ?o1 - observation) (delay-short-time ?o - observation ?o1 - observation) (delay-rc-wait ?o - observation ?o1 - observation) (fault-count-2 ?a1 - observable ?a2 - observable ?c - count) (next-count ?c - count ?next-c - count) (hypothesis-fault-count-2 ?h - hypothesis ?a1 - observable ?a2 - observable ?c - count) (dominates-2 ?h - hypothesis ?a1 - observable ?a2 - observable) (breaker-state-is-unknown ?b - breaker) (breaker-state-is-open ?b - breaker) (breaker-state-is-closed ?b - breaker) (breaker-commanded-open ?b - breaker ?o - observation) (breaker-commanded-closed ?b - breaker ?o - observation) (breaker-ar-status-is-unknown ?b - breaker) (breaker-ar-status-is-auto ?b - breaker) (breaker-ar-status-is-non-auto ?b - breaker) (breaker-commanded-ar-auto ?b - breaker ?o - observation) (breaker-commanded-ar-non-auto ?b - breaker ?o - observation) (breaker-auto-reclose-wait ?b - breaker ?o - observation) (breaker-auto-reopen-wait ?b - breaker ?o - observation) (breaker-auto-reclose-lockout ?b - breaker) (disconnector-state-is-unknown ?d - disconnector) (disconnector-state-is-open ?d - disconnector) (disconnector-state-is-closed ?d - disconnector) (disconnector-commanded-open ?d - disconnector ?o - observation) (disconnector-commanded-closed ?d - disconnector ?o - observation) (bus-isolated ?b - bus) (bus-iso-state-changed ?b - bus ?o - observation) (bus-voltage-unknown ?b - bus) (bus-voltage-high ?b - bus) (bus-voltage-low ?b - bus) (bus-voltage-normal ?b - bus) (bus-mw-high ?b - bus) (bus-mw-low ?b - bus) (bus-mw-normal ?b - bus) (bus-mvar-high ?b - bus) (bus-mvar-low ?b - bus) (bus-mvar-normal ?b - bus) (line-isolated ?l - line) (line-iso-state-may-have-changed ?l - line ?o - observation) (line-iso-state-changed ?l - line ?o - observation) (line-iso-trip-in-progress ?l - line ?o - observation) (line-voltage-unknown ?l - line) (line-voltage-high ?l - line) (line-voltage-low ?l - line) (line-voltage-normal ?l - line) (line-mw-high ?l - line) (line-mw-low ?l - line) (line-mw-normal ?l - line) (line-mvar-high ?l - line) (line-mvar-low ?l - line) (line-mvar-normal ?l - line) (generator-status-is-unknown ?g - generator) (generator-status-is-on ?g - generator) (generator-status-is-off ?g - generator) (generator-status-is-shutting-down ?g - generator) (generator-status-is-starting-up ?g - generator) (generator-runback ?g - generator) (not-breaker-auto-reclose-lockout ?b - breaker) (not-bus-isolated ?b - bus) (not-line-isolated ?l - line) (not-line-iso-trip-in-progress ?l - line ?o - observation))
+ (:functions (total-cost))
+ (:constants low_1 - low_level low_2 - low_level low_3 - low_level low_4 - low_level low_5 - low_level low - low_level high_1 - high_level high_2 - high_level high_3 - high_level high_4 - high_level high_5 - high_level high - high_level normal - level command - message cb_state - message cb_command_fail - message open - message closed - message abnormal - message not_responding - message ar_supy_control_status - message cb_ar_status - message auto - message non_auto - message open-unexplained - message close-unexplained - message ar-status-auto-unexplained - message ar-status-non-auto-unexplained - message not-responding - message sw_state - message limit - message entered_zero_zone - message kv - message mw - message mvar - message voltage-low-unexplained - message voltage-high-unexplained - message voltage-normal-unexplained - message voltage-zero-unexplained - message power-low-unexplained - message power-high-unexplained - message power-normal-unexplained - message power-zero-unexplained - message mvar-low-unexplained - message mvar-high-unexplained - message mvar-normal-unexplained - message mvar-zero-unexplained - message line-iso-trip - message runback - message unit_status - message on - message off - message alarm - message reset - message shutdown-unexplained - message startup-unexplained - message runback-alarm-unexplained - message runback-reset-unexplained - message breaker_x1_x2 - breaker breaker_x3_x4 - breaker line_x5_x6 - line breaker_x7_x8 - breaker breaker_x9_x10 - breaker breaker_x11_x12 - breaker breaker_x13_x14 - breaker breaker_x15_x16 - breaker bus_x12 - bus generator_x12_1 - generator line_x19_x20 - line breaker_x21_x22 - breaker breaker_x23_x24 - breaker breaker_x25_x26 - breaker breaker_x27_x18 - breaker obs2544 - observation obs2545 - observation obs2546 - observation obs2547 - observation obs2548 - observation obs2549 - observation obs2550 - observation obs2551 - observation obs2552 - observation obs2553 - observation obs2554 - observation obs2555 - observation obs2556 - observation obs2557 - observation obs2558 - observation obs2559 - observation obs2560 - observation obs2561 - observation obs2562 - observation obs2563 - observation)
+ (:action breaker-init-state-was-open
+  :parameters ( ?b - breaker)
+  :precondition (and (breaker-state-is-unknown ?b))
+  :effect (and (breaker-state-is-open ?b) (not (breaker-state-is-unknown ?b)))
+ )
+ (:action breaker-init-state-was-closed
+  :parameters ( ?b - breaker)
+  :precondition (and (breaker-state-is-unknown ?b))
+  :effect (and (breaker-state-is-closed ?b) (not (breaker-state-is-unknown ?b)))
+ )
+ (:action breaker-init-ar-status-was-auto
+  :parameters ( ?b - breaker)
+  :precondition (and (breaker-ar-status-is-unknown ?b))
+  :effect (and (breaker-ar-status-is-auto ?b) (not (breaker-ar-status-is-unknown ?b)))
+ )
+ (:action breaker-init-ar-status-was-non-auto
+  :parameters ( ?b - breaker)
+  :precondition (and (breaker-ar-status-is-unknown ?b))
+  :effect (and (breaker-ar-status-is-non-auto ?b) (not (breaker-ar-status-is-unknown ?b)))
+ )
+ (:action breaker-open-unexplained0
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x1_x2) (matches-3 ?o0 breaker_x1_x2 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x1_x2) (observed ?o0) (line-iso-state-may-have-changed line_x19_x20 ?o0) (not (breaker-state-is-closed breaker_x1_x2)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-open-unexplained1
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x3_x4) (matches-3 ?o0 breaker_x3_x4 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x3_x4) (observed ?o0) (not (breaker-state-is-closed breaker_x3_x4)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-open-unexplained2
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x7_x8) (matches-3 ?o0 breaker_x7_x8 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x7_x8) (observed ?o0) (not (breaker-state-is-closed breaker_x7_x8)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-open-unexplained3
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x9_x10) (matches-3 ?o0 breaker_x9_x10 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x9_x10) (observed ?o0) (not (breaker-state-is-closed breaker_x9_x10)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-open-unexplained4
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x11_x12) (matches-3 ?o0 breaker_x11_x12 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x11_x12) (observed ?o0) (not (breaker-state-is-closed breaker_x11_x12)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-open-unexplained5
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x13_x14) (matches-3 ?o0 breaker_x13_x14 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x13_x14) (observed ?o0) (not (breaker-state-is-closed breaker_x13_x14)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-open-unexplained6
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x15_x16) (matches-3 ?o0 breaker_x15_x16 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x15_x16) (observed ?o0) (not (breaker-state-is-closed breaker_x15_x16)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-trip-unexplained0
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x1_x2) (breaker-ar-status-is-auto breaker_x1_x2) (matches-3 ?o0 breaker_x1_x2 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x1_x2) (breaker-auto-reclose-wait breaker_x1_x2 ?o0) (observed ?o0) (line-iso-state-may-have-changed line_x19_x20 ?o0) (not (breaker-state-is-closed breaker_x1_x2)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-trip-unexplained1
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x3_x4) (breaker-ar-status-is-auto breaker_x3_x4) (matches-3 ?o0 breaker_x3_x4 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x3_x4) (breaker-auto-reclose-wait breaker_x3_x4 ?o0) (observed ?o0) (not (breaker-state-is-closed breaker_x3_x4)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-trip-unexplained2
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x7_x8) (breaker-ar-status-is-auto breaker_x7_x8) (matches-3 ?o0 breaker_x7_x8 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x7_x8) (breaker-auto-reclose-wait breaker_x7_x8 ?o0) (observed ?o0) (not (breaker-state-is-closed breaker_x7_x8)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-trip-unexplained3
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x9_x10) (breaker-ar-status-is-auto breaker_x9_x10) (matches-3 ?o0 breaker_x9_x10 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x9_x10) (breaker-auto-reclose-wait breaker_x9_x10 ?o0) (observed ?o0) (not (breaker-state-is-closed breaker_x9_x10)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-trip-unexplained4
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x11_x12) (breaker-ar-status-is-auto breaker_x11_x12) (matches-3 ?o0 breaker_x11_x12 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x11_x12) (breaker-auto-reclose-wait breaker_x11_x12 ?o0) (observed ?o0) (not (breaker-state-is-closed breaker_x11_x12)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-trip-unexplained5
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x13_x14) (breaker-ar-status-is-auto breaker_x13_x14) (matches-3 ?o0 breaker_x13_x14 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x13_x14) (breaker-auto-reclose-wait breaker_x13_x14 ?o0) (observed ?o0) (not (breaker-state-is-closed breaker_x13_x14)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-trip-unexplained6
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x15_x16) (breaker-ar-status-is-auto breaker_x15_x16) (matches-3 ?o0 breaker_x15_x16 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x15_x16) (breaker-auto-reclose-wait breaker_x15_x16 ?o0) (observed ?o0) (not (breaker-state-is-closed breaker_x15_x16)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-close-unexplained0
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-open breaker_x1_x2) (matches-3 ?o0 breaker_x1_x2 cb_state closed) (pending ?o0))
+  :effect (and (breaker-state-is-closed breaker_x1_x2) (observed ?o0) (line-iso-state-may-have-changed line_x19_x20 ?o0) (not (breaker-state-is-open breaker_x1_x2)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-close-unexplained1
+  :parameters ( ?o0 - observation)
+  :precondition (and (breaker-state-is-open breaker_x3_x4) (matches-3 ?o0 breaker_x3_x4 cb_state closed) (pending ?o0))
+  :effect (and (breaker-state-is-closed breaker_x3_x4) (observed ?o0) (not (breaker-state-is-open breaker_x3_x4)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-reclose0
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-open breaker_x1_x2) (breaker-auto-reclose-wait breaker_x1_x2 ?tag0) (matches-3 ?o0 breaker_x1_x2 cb_state closed) (pending ?o0) (not-breaker-auto-reclose-lockout breaker_x1_x2))
+  :effect (and (breaker-state-is-closed breaker_x1_x2) (breaker-auto-reopen-wait breaker_x1_x2 ?o0) (observed ?o0) (line-iso-state-may-have-changed line_x19_x20 ?o0) (not (breaker-state-is-open breaker_x1_x2)) (not (pending ?o0)))
+ )
+ (:action breaker-reclose1
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-open breaker_x3_x4) (breaker-auto-reclose-wait breaker_x3_x4 ?tag0) (matches-3 ?o0 breaker_x3_x4 cb_state closed) (pending ?o0) (not-breaker-auto-reclose-lockout breaker_x3_x4))
+  :effect (and (breaker-state-is-closed breaker_x3_x4) (breaker-auto-reopen-wait breaker_x3_x4 ?o0) (observed ?o0) (not (breaker-state-is-open breaker_x3_x4)) (not (pending ?o0)))
+ )
+ (:action breaker-reopen0
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x1_x2) (breaker-auto-reopen-wait breaker_x1_x2 ?tag0) (matches-3 ?o0 breaker_x1_x2 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x1_x2) (breaker-auto-reclose-lockout breaker_x1_x2) (observed ?o0) (line-iso-state-may-have-changed line_x19_x20 ?o0) (not (breaker-state-is-closed breaker_x1_x2)) (not (pending ?o0)) (not (not-breaker-auto-reclose-lockout breaker_x1_x2)))
+ )
+ (:action breaker-reopen1
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x3_x4) (breaker-auto-reopen-wait breaker_x3_x4 ?tag0) (matches-3 ?o0 breaker_x3_x4 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x3_x4) (breaker-auto-reclose-lockout breaker_x3_x4) (observed ?o0) (not (breaker-state-is-closed breaker_x3_x4)) (not (pending ?o0)) (not (not-breaker-auto-reclose-lockout breaker_x3_x4)))
+ )
+ (:action breaker-reopen2
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x7_x8) (breaker-auto-reopen-wait breaker_x7_x8 ?tag0) (matches-3 ?o0 breaker_x7_x8 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x7_x8) (breaker-auto-reclose-lockout breaker_x7_x8) (observed ?o0) (not (breaker-state-is-closed breaker_x7_x8)) (not (pending ?o0)) (not (not-breaker-auto-reclose-lockout breaker_x7_x8)))
+ )
+ (:action breaker-reopen3
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x9_x10) (breaker-auto-reopen-wait breaker_x9_x10 ?tag0) (matches-3 ?o0 breaker_x9_x10 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x9_x10) (breaker-auto-reclose-lockout breaker_x9_x10) (observed ?o0) (not (breaker-state-is-closed breaker_x9_x10)) (not (pending ?o0)) (not (not-breaker-auto-reclose-lockout breaker_x9_x10)))
+ )
+ (:action breaker-reopen4
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x11_x12) (breaker-auto-reopen-wait breaker_x11_x12 ?tag0) (matches-3 ?o0 breaker_x11_x12 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x11_x12) (breaker-auto-reclose-lockout breaker_x11_x12) (observed ?o0) (not (breaker-state-is-closed breaker_x11_x12)) (not (pending ?o0)) (not (not-breaker-auto-reclose-lockout breaker_x11_x12)))
+ )
+ (:action breaker-reopen5
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x13_x14) (breaker-auto-reopen-wait breaker_x13_x14 ?tag0) (matches-3 ?o0 breaker_x13_x14 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x13_x14) (breaker-auto-reclose-lockout breaker_x13_x14) (observed ?o0) (not (breaker-state-is-closed breaker_x13_x14)) (not (pending ?o0)) (not (not-breaker-auto-reclose-lockout breaker_x13_x14)))
+ )
+ (:action breaker-reopen6
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-state-is-closed breaker_x15_x16) (breaker-auto-reopen-wait breaker_x15_x16 ?tag0) (matches-3 ?o0 breaker_x15_x16 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x15_x16) (breaker-auto-reclose-lockout breaker_x15_x16) (observed ?o0) (not (breaker-state-is-closed breaker_x15_x16)) (not (pending ?o0)) (not (not-breaker-auto-reclose-lockout breaker_x15_x16)))
+ )
+ (:action breaker-command-open
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?b cb_state open) (pending ?o0))
+  :effect (and (breaker-commanded-open ?b ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-open-on-command0
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open breaker_x1_x2 ?tag0) (matches-3 ?o0 breaker_x1_x2 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x1_x2) (observed ?o0) (line-iso-state-may-have-changed line_x19_x20 ?o0) (not-breaker-auto-reclose-lockout breaker_x1_x2) (not (breaker-state-is-closed breaker_x1_x2)) (not (breaker-state-is-unknown breaker_x1_x2)) (not (breaker-auto-reclose-lockout breaker_x1_x2)) (not (pending ?o0)))
+ )
+ (:action breaker-open-on-command1
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open breaker_x3_x4 ?tag0) (matches-3 ?o0 breaker_x3_x4 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x3_x4) (observed ?o0) (not-breaker-auto-reclose-lockout breaker_x3_x4) (not (breaker-state-is-closed breaker_x3_x4)) (not (breaker-state-is-unknown breaker_x3_x4)) (not (breaker-auto-reclose-lockout breaker_x3_x4)) (not (pending ?o0)))
+ )
+ (:action breaker-open-on-command2
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open breaker_x7_x8 ?tag0) (matches-3 ?o0 breaker_x7_x8 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x7_x8) (observed ?o0) (not-breaker-auto-reclose-lockout breaker_x7_x8) (not (breaker-state-is-closed breaker_x7_x8)) (not (breaker-state-is-unknown breaker_x7_x8)) (not (breaker-auto-reclose-lockout breaker_x7_x8)) (not (pending ?o0)))
+ )
+ (:action breaker-open-on-command3
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open breaker_x9_x10 ?tag0) (matches-3 ?o0 breaker_x9_x10 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x9_x10) (observed ?o0) (not-breaker-auto-reclose-lockout breaker_x9_x10) (not (breaker-state-is-closed breaker_x9_x10)) (not (breaker-state-is-unknown breaker_x9_x10)) (not (breaker-auto-reclose-lockout breaker_x9_x10)) (not (pending ?o0)))
+ )
+ (:action breaker-open-on-command4
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open breaker_x11_x12 ?tag0) (matches-3 ?o0 breaker_x11_x12 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x11_x12) (observed ?o0) (not-breaker-auto-reclose-lockout breaker_x11_x12) (not (breaker-state-is-closed breaker_x11_x12)) (not (breaker-state-is-unknown breaker_x11_x12)) (not (breaker-auto-reclose-lockout breaker_x11_x12)) (not (pending ?o0)))
+ )
+ (:action breaker-open-on-command5
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open breaker_x13_x14 ?tag0) (matches-3 ?o0 breaker_x13_x14 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x13_x14) (observed ?o0) (not-breaker-auto-reclose-lockout breaker_x13_x14) (not (breaker-state-is-closed breaker_x13_x14)) (not (breaker-state-is-unknown breaker_x13_x14)) (not (breaker-auto-reclose-lockout breaker_x13_x14)) (not (pending ?o0)))
+ )
+ (:action breaker-open-on-command6
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open breaker_x15_x16 ?tag0) (matches-3 ?o0 breaker_x15_x16 cb_state open) (pending ?o0))
+  :effect (and (breaker-state-is-open breaker_x15_x16) (observed ?o0) (not-breaker-auto-reclose-lockout breaker_x15_x16) (not (breaker-state-is-closed breaker_x15_x16)) (not (breaker-state-is-unknown breaker_x15_x16)) (not (breaker-auto-reclose-lockout breaker_x15_x16)) (not (pending ?o0)))
+ )
+ (:action breaker-command-close
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?b cb_state closed) (pending ?o0))
+  :effect (and (breaker-commanded-closed ?b ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-close-on-command0
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-closed breaker_x1_x2 ?tag0) (matches-3 ?o0 breaker_x1_x2 cb_state closed) (pending ?o0))
+  :effect (and (breaker-state-is-closed breaker_x1_x2) (observed ?o0) (line-iso-state-may-have-changed line_x19_x20 ?o0) (not-breaker-auto-reclose-lockout breaker_x1_x2) (not (breaker-state-is-open breaker_x1_x2)) (not (breaker-state-is-unknown breaker_x1_x2)) (not (breaker-auto-reclose-lockout breaker_x1_x2)) (not (pending ?o0)))
+ )
+ (:action breaker-close-on-command1
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-closed breaker_x3_x4 ?tag0) (matches-3 ?o0 breaker_x3_x4 cb_state closed) (pending ?o0))
+  :effect (and (breaker-state-is-closed breaker_x3_x4) (observed ?o0) (not-breaker-auto-reclose-lockout breaker_x3_x4) (not (breaker-state-is-open breaker_x3_x4)) (not (breaker-state-is-unknown breaker_x3_x4)) (not (breaker-auto-reclose-lockout breaker_x3_x4)) (not (pending ?o0)))
+ )
+ (:action breaker-command-open-fail
+  :parameters ( ?b - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-open ?b ?tag0) (matches-2 ?o0 ?b cb_command_fail) (pending ?o0))
+  :effect (and (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-command-close-fail
+  :parameters ( ?b - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-closed ?b ?tag0) (matches-2 ?o0 ?b cb_command_fail) (pending ?o0))
+  :effect (and (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-command-ar-auto-1
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?b ar_supy_control_status auto) (pending ?o0))
+  :effect (and (breaker-commanded-ar-auto ?b ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-command-ar-auto-2
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?b cb_ar_status auto) (pending ?o0))
+  :effect (and (breaker-commanded-ar-auto ?b ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-ar-status-auto-1
+  :parameters ( ?b - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-ar-auto ?b ?tag0) (matches-3 ?o0 ?b ar_supy_control_status auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-auto ?b) (observed ?o0) (not (breaker-ar-status-is-non-auto ?b)) (not (pending ?o0)))
+ )
+ (:action breaker-ar-status-auto-2
+  :parameters ( ?b - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-ar-auto ?b ?tag0) (matches-3 ?o0 ?b cb_ar_status auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-auto ?b) (observed ?o0) (not (breaker-ar-status-is-non-auto ?b)) (not (pending ?o0)))
+ )
+ (:action breaker-ar-status-auto-unexplained-1
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b ar_supy_control_status auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-auto ?b) (observed ?o0) (not (breaker-ar-status-is-non-auto ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-ar-status-auto-unexplained-2
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b cb_ar_status auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-auto ?b) (observed ?o0) (not (breaker-ar-status-is-non-auto ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-command-ar-non-auto-1
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?b ar_supy_control_status non_auto) (pending ?o0))
+  :effect (and (breaker-commanded-ar-non-auto ?b ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-command-ar-non-auto-2
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?b cb_ar_status non_auto) (pending ?o0))
+  :effect (and (breaker-commanded-ar-non-auto ?b ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action breaker-ar-status-non-auto-1
+  :parameters ( ?b - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-ar-non-auto ?b ?tag0) (matches-3 ?o0 ?b ar_supy_control_status non_auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-non-auto ?b) (observed ?o0) (not (breaker-ar-status-is-auto ?b)) (not (pending ?o0)))
+ )
+ (:action breaker-ar-status-non-auto-2
+  :parameters ( ?b - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (breaker-commanded-ar-non-auto ?b ?tag0) (matches-3 ?o0 ?b cb_ar_status non_auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-non-auto ?b) (observed ?o0) (not (breaker-ar-status-is-auto ?b)) (not (pending ?o0)))
+ )
+ (:action breaker-ar-status-non-auto-unexplained-1
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b ar_supy_control_status non_auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-non-auto ?b) (observed ?o0) (not (breaker-ar-status-is-auto ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-ar-status-non-auto-unexplained-2
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b cb_ar_status non_auto) (pending ?o0))
+  :effect (and (breaker-ar-status-is-non-auto ?b) (observed ?o0) (not (breaker-ar-status-is-auto ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-abnormal
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b cb_state abnormal) (pending ?o0))
+  :effect (and (observed ?o0) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action breaker-not-responding
+  :parameters ( ?b - breaker ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b cb_state not_responding) (pending ?o0))
+  :effect (and (observed ?o0) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action disconnector-init-state-was-open
+  :parameters ( ?d - disconnector)
+  :precondition (and (disconnector-state-is-unknown ?d))
+  :effect (and (disconnector-state-is-open ?d) (not (disconnector-state-is-unknown ?d)))
+ )
+ (:action disconnector-init-state-was-closed
+  :parameters ( ?d - disconnector)
+  :precondition (and (disconnector-state-is-unknown ?d))
+  :effect (and (disconnector-state-is-closed ?d) (not (disconnector-state-is-unknown ?d)))
+ )
+ (:action disconnector-open-unexplained
+  :parameters ( ?d - disconnector ?o0 - observation)
+  :precondition (and (disconnector-state-is-closed ?d) (matches-3 ?o0 ?d sw_state open) (pending ?o0))
+  :effect (and (disconnector-state-is-open ?d) (observed ?o0) (not (disconnector-state-is-closed ?d)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action disconnector-close-unexplained
+  :parameters ( ?d - disconnector ?o0 - observation)
+  :precondition (and (disconnector-state-is-open ?d) (matches-3 ?o0 ?d sw_state closed) (pending ?o0))
+  :effect (and (disconnector-state-is-closed ?d) (observed ?o0) (not (disconnector-state-is-open ?d)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action disconnector-command-open
+  :parameters ( ?d - disconnector ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?d sw_state open) (pending ?o0))
+  :effect (and (disconnector-commanded-open ?d ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action disconnector-open-on-command
+  :parameters ( ?d - disconnector ?o0 - observation ?tag0 - observation)
+  :precondition (and (disconnector-commanded-open ?d ?tag0) (matches-3 ?o0 ?d sw_state open) (pending ?o0))
+  :effect (and (disconnector-state-is-open ?d) (observed ?o0) (not (disconnector-state-is-closed ?d)) (not (disconnector-state-is-unknown ?d)) (not (pending ?o0)))
+ )
+ (:action disconnector-command-close
+  :parameters ( ?d - disconnector ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 command ?d sw_state closed) (pending ?o0))
+  :effect (and (disconnector-commanded-closed ?d ?o0) (observed ?o0) (not (pending ?o0)))
+ )
+ (:action disconnector-close-on-command
+  :parameters ( ?d - disconnector ?o0 - observation ?tag0 - observation)
+  :precondition (and (disconnector-commanded-closed ?d ?tag0) (matches-3 ?o0 ?d sw_state closed) (pending ?o0))
+  :effect (and (disconnector-state-is-closed ?d) (observed ?o0) (not (disconnector-state-is-open ?d)) (not (disconnector-state-is-unknown ?d)) (not (pending ?o0)))
+ )
+ (:action disconnector-not-responding
+  :parameters ( ?d - disconnector ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?d sw_state not_responding) (pending ?o0))
+  :effect (and (observed ?o0) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-voltage-goes-low-unexplained
+  :parameters ( ?b - bus ?lvl - low_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit kv ?lvl) (pending ?o0))
+  :effect (and (bus-voltage-low ?b) (observed ?o0) (not (bus-voltage-high ?b)) (not (bus-voltage-normal ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-voltage-goes-high-unexplained
+  :parameters ( ?b - bus ?lvl - high_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit kv ?lvl) (pending ?o0))
+  :effect (and (bus-voltage-high ?b) (observed ?o0) (not (bus-voltage-low ?b)) (not (bus-voltage-normal ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-voltage-goes-normal-unexplained
+  :parameters ( ?b - bus ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit kv normal) (pending ?o0))
+  :effect (and (bus-voltage-normal ?b) (observed ?o0) (not (bus-voltage-low ?b)) (not (bus-voltage-high ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-voltage-goes-to-zero-unexplained
+  :parameters ( ?b - bus ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b entered_zero_zone kv) (pending ?o0))
+  :effect (and (observed ?o0) (not (bus-voltage-low ?b)) (not (bus-voltage-high ?b)) (not (bus-voltage-normal ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-voltage-goes-low-when-re-energised
+  :parameters ( ?b - bus ?lvl - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-iso-state-changed ?b ?tag0) (matches-4 ?o0 ?b limit kv ?lvl) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-voltage-low ?b) (observed ?o0) (not (bus-voltage-high ?b)) (not (bus-voltage-normal ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)))
+ )
+ (:action bus-voltage-goes-high-when-re-energised
+  :parameters ( ?b - bus ?lvl - high_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-iso-state-changed ?b ?tag0) (matches-4 ?o0 ?b limit kv ?lvl) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-voltage-high ?b) (observed ?o0) (not (bus-voltage-low ?b)) (not (bus-voltage-normal ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)))
+ )
+ (:action bus-voltage-goes-normal-when-re-energised
+  :parameters ( ?b - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-iso-state-changed ?b ?tag0) (matches-4 ?o0 ?b limit kv normal) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-voltage-normal ?b) (observed ?o0) (not (bus-voltage-high ?b)) (not (bus-voltage-low ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)))
+ )
+ (:action bus-voltage-goes-normal-when-caps-out
+  :parameters ( ?b - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-voltage-high ?b) (capacitor-switched-out ?tag0) (matches-4 ?o0 ?b limit kv normal) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-voltage-normal ?b) (observed ?o0) (not (bus-voltage-high ?b)) (not (bus-voltage-low ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)))
+ )
+ (:action bus-voltage-goes-normal-when-caps-out-2
+  :parameters ( ?b - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-voltage-unknown ?b) (capacitor-switched-out ?tag0) (matches-4 ?o0 ?b limit kv normal) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-voltage-normal ?b) (observed ?o0) (not (bus-voltage-high ?b)) (not (bus-voltage-low ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)))
+ )
+ (:action bus-voltage-goes-normal-when-caps-in
+  :parameters ( ?b - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-voltage-low ?b) (capacitor-switched-in ?tag0) (matches-4 ?o0 ?b limit kv normal) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-voltage-normal ?b) (observed ?o0) (not (bus-voltage-high ?b)) (not (bus-voltage-low ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)))
+ )
+ (:action bus-voltage-goes-normal-when-caps-in-2
+  :parameters ( ?b - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-voltage-unknown ?b) (capacitor-switched-in ?tag0) (matches-4 ?o0 ?b limit kv normal) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-voltage-normal ?b) (observed ?o0) (not (bus-voltage-high ?b)) (not (bus-voltage-low ?b)) (not (bus-voltage-unknown ?b)) (not (pending ?o0)))
+ )
+ (:action bus-mw-goes-low-unexplained
+  :parameters ( ?b - bus ?lvl - low_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit mw ?lvl) (pending ?o0))
+  :effect (and (bus-mw-low ?b) (observed ?o0) (not (bus-mw-high ?b)) (not (bus-mw-normal ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-mw-goes-high-unexplained
+  :parameters ( ?b - bus ?lvl - high_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit mw ?lvl) (pending ?o0))
+  :effect (and (bus-mw-high ?b) (observed ?o0) (not (bus-mw-low ?b)) (not (bus-mw-normal ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-mw-goes-normal-unexplained
+  :parameters ( ?b - bus ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit mw normal) (pending ?o0))
+  :effect (and (bus-mw-normal ?b) (observed ?o0) (not (bus-mw-low ?b)) (not (bus-mw-high ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-mw-goes-to-zero-unexplained
+  :parameters ( ?b - bus ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b entered_zero_zone mw) (pending ?o0))
+  :effect (and (observed ?o0) (not (bus-mw-low ?b)) (not (bus-mw-high ?b)) (not (bus-mw-normal ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-mw-goes-to-zero-when-isolated0
+  :parameters ( ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-isolated bus_x12) (bus-iso-state-changed bus_x12 ?tag0) (matches-3 ?o0 bus_x12 entered_zero_zone mw) (pending ?o0) (generator-status-is-off generator_x12_1))
+  :effect (and (observed ?o0) (not (bus-mw-high bus_x12)) (not (bus-mw-low bus_x12)) (not (bus-mw-normal bus_x12)) (not (pending ?o0)))
+ )
+ (:action bus-mw-goes-low-when-re-energised
+  :parameters ( ?b - bus ?lvl - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-iso-state-changed ?b ?tag0) (matches-4 ?o0 ?b limit mw ?lvl) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-mw-low ?b) (observed ?o0) (not (bus-mw-high ?b)) (not (bus-mw-normal ?b)) (not (pending ?o0)))
+ )
+ (:action bus-mw-goes-high-when-re-energised
+  :parameters ( ?b - bus ?lvl - high_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-iso-state-changed ?b ?tag0) (matches-4 ?o0 ?b limit mw ?lvl) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-mw-high ?b) (observed ?o0) (not (bus-mw-low ?b)) (not (bus-mw-normal ?b)) (not (pending ?o0)))
+ )
+ (:action bus-mw-goes-normal-when-re-energised
+  :parameters ( ?b - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (bus-iso-state-changed ?b ?tag0) (matches-4 ?o0 ?b limit mw normal) (pending ?o0) (not-bus-isolated ?b))
+  :effect (and (bus-mw-normal ?b) (observed ?o0) (not (bus-mw-high ?b)) (not (bus-mw-low ?b)) (not (pending ?o0)))
+ )
+ (:action bus-mvar-goes-low-unexplained
+  :parameters ( ?b - bus ?lvl - low_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit mvar ?lvl) (pending ?o0))
+  :effect (and (bus-mvar-low ?b) (observed ?o0) (not (bus-mvar-high ?b)) (not (bus-mvar-normal ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-mvar-goes-high-unexplained
+  :parameters ( ?b - bus ?lvl - high_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit mvar ?lvl) (pending ?o0))
+  :effect (and (bus-mvar-high ?b) (observed ?o0) (not (bus-mvar-low ?b)) (not (bus-mvar-normal ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-mvar-goes-normal-unexplained
+  :parameters ( ?b - bus ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?b limit mvar normal) (pending ?o0))
+  :effect (and (bus-mvar-normal ?b) (observed ?o0) (not (bus-mvar-low ?b)) (not (bus-mvar-high ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action bus-mvar-goes-to-zero-unexplained
+  :parameters ( ?b - bus ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?b entered_zero_zone mvar) (pending ?o0))
+  :effect (and (observed ?o0) (not (bus-mvar-low ?b)) (not (bus-mvar-high ?b)) (not (bus-mvar-normal ?b)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-iso-trip-first-breaker-simple-trip-1
+  :parameters ( ?l - line ?b - breaker ?b-1 - breaker ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (line-isolator ?b ?l) (breaker-state-is-closed ?b-1) (breaker-ar-status-is-auto ?b-1) (matches-3 ?o0 ?b-1 cb_state open) (pending ?o0) (not-line-isolated ?l) (not-breaker-auto-reclose-lockout ?b-1))
+  :effect (and (line-iso-trip-in-progress ?l ?o0) (breaker-state-is-open ?b-1) (breaker-auto-reclose-wait ?b-1 ?o0) (observed ?o0) (not (breaker-state-is-closed ?b-1)) (not (pending ?o0)) (not (not-line-iso-trip-in-progress ?l ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-iso-trip-first-breaker-simple-trip-2
+  :parameters ( ?l - line ?b - breaker ?b-1 - breaker ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (line-isolator ?b ?l) (breaker-state-is-closed ?b-1) (breaker-ar-status-is-non-auto ?b-1) (matches-3 ?o0 ?b-1 cb_state open) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-iso-trip-in-progress ?l ?o0) (breaker-state-is-open ?b-1) (observed ?o0) (not (breaker-state-is-closed ?b-1)) (not (pending ?o0)) (not (not-line-iso-trip-in-progress ?l ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-iso-trip-more-breaker-simple-trip-1
+  :parameters ( ?l - line ?b - breaker ?b-1 - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (line-isolator ?b ?l) (line-iso-trip-in-progress ?l ?tag0) (breaker-state-is-closed ?b-1) (breaker-ar-status-is-auto ?b-1) (matches-3 ?o0 ?b-1 cb_state open) (pending ?o0) (not-breaker-auto-reclose-lockout ?b-1))
+  :effect (and (static-true) (breaker-state-is-open ?b-1) (breaker-auto-reclose-wait ?b-1 ?o0) (observed ?o0) (not (breaker-state-is-closed ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-iso-trip-more-breaker-simple-trip-2
+  :parameters ( ?l - line ?b - breaker ?b-1 - breaker ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (line-isolator ?b ?l) (line-iso-trip-in-progress ?l ?tag0) (breaker-state-is-closed ?b-1) (breaker-ar-status-is-non-auto ?b-1) (matches-3 ?o0 ?b-1 cb_state open) (pending ?o0))
+  :effect (and (static-true) (breaker-state-is-open ?b-1) (observed ?o0) (not (breaker-state-is-closed ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-finish-iso-trip-2
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?tag1 - observation)
+  :precondition (and (line-isolators-2 ?l ?b1 ?b2) (line-iso-trip-in-progress ?l ?tag1) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2))
+  :effect (and (line-iso-state-changed ?l ?tag1) (line-isolated ?l) (not-line-iso-trip-in-progress ?l ?tag1) (not (line-iso-trip-in-progress ?l ?tag1)) (not (not-line-isolated ?l)))
+ )
+ (:action line-finish-iso-trip-3
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?tag1 - observation)
+  :precondition (and (line-isolators-3 ?l ?b1 ?b2 ?b3) (line-iso-trip-in-progress ?l ?tag1) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2) (breaker-state-is-open ?b3))
+  :effect (and (line-iso-state-changed ?l ?tag1) (line-isolated ?l) (not-line-iso-trip-in-progress ?l ?tag1) (not (line-iso-trip-in-progress ?l ?tag1)) (not (not-line-isolated ?l)))
+ )
+ (:action line-finish-iso-trip-4
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker ?tag1 - observation)
+  :precondition (and (line-isolators-4 ?l ?b1 ?b2 ?b3 ?b4) (line-iso-trip-in-progress ?l ?tag1) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2) (breaker-state-is-open ?b3) (breaker-state-is-open ?b4))
+  :effect (and (line-iso-state-changed ?l ?tag1) (line-isolated ?l) (not-line-iso-trip-in-progress ?l ?tag1) (not (line-iso-trip-in-progress ?l ?tag1)) (not (not-line-isolated ?l)))
+ )
+ (:action line-set-state-isolated-2
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?tag1 - observation)
+  :precondition (and (line-isolators-2 ?l ?b1 ?b2) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2))
+  :effect (and (line-isolated ?l) (line-iso-state-changed ?l ?tag1) (not (not-line-isolated ?l)))
+ )
+ (:action line-set-state-isolated-3
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?tag1 - observation)
+  :precondition (and (line-isolators-3 ?l ?b1 ?b2 ?b3) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2) (breaker-state-is-open ?b3))
+  :effect (and (line-isolated ?l) (line-iso-state-changed ?l ?tag1) (not (not-line-isolated ?l)))
+ )
+ (:action line-set-state-isolated-4
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker ?tag1 - observation)
+  :precondition (and (line-isolators-4 ?l ?b1 ?b2 ?b3 ?b4) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2) (breaker-state-is-open ?b3) (breaker-state-is-open ?b4))
+  :effect (and (line-isolated ?l) (line-iso-state-changed ?l ?tag1) (not (not-line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-2a
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-2 ?l ?b1 ?b2) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b1))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-2b
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-2 ?l ?b1 ?b2) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b2))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-3a
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-3 ?l ?b1 ?b2 ?b3) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b1))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-3b
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-3 ?l ?b1 ?b2 ?b3) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b2))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-3c
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-3 ?l ?b1 ?b2 ?b3) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b3))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-4a
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-4 ?l ?b1 ?b2 ?b3 ?b4) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b1))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-4b
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-4 ?l ?b1 ?b2 ?b3 ?b4) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b2))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-4c
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-4 ?l ?b1 ?b2 ?b3 ?b4) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b3))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-re-energise-isolated-4d
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker ?tag1 - observation)
+  :precondition (and (line-isolated ?l) (line-isolators-4 ?l ?b1 ?b2 ?b3 ?b4) (line-iso-state-may-have-changed ?l ?tag1) (breaker-state-is-closed ?b4))
+  :effect (and (line-iso-state-changed ?l ?tag1) (not-line-isolated ?l) (not (line-isolated ?l)))
+ )
+ (:action line-init-state-isolated-2
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker)
+  :precondition (and (line-isolators-2 ?l ?b1 ?b2) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2))
+  :effect (and (line-isolated ?l) (not (not-line-isolated ?l)))
+ )
+ (:action line-init-state-isolated-3
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker)
+  :precondition (and (line-isolators-3 ?l ?b1 ?b2 ?b3) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2) (breaker-state-is-open ?b3))
+  :effect (and (line-isolated ?l) (not (not-line-isolated ?l)))
+ )
+ (:action line-init-state-isolated-4
+  :parameters ( ?l - line ?b1 - breaker ?b2 - breaker ?b3 - breaker ?b4 - breaker)
+  :precondition (and (line-isolators-4 ?l ?b1 ?b2 ?b3 ?b4) (breaker-state-is-open ?b1) (breaker-state-is-open ?b2) (breaker-state-is-open ?b3) (breaker-state-is-open ?b4))
+  :effect (and (line-isolated ?l) (not (not-line-isolated ?l)))
+ )
+ (:action line-voltage-goes-low-unexplained-1
+  :parameters ( ?l - line ?lvl - low_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit kv ?lvl) (pending ?o0))
+  :effect (and (line-voltage-low ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-low-unexplained-2-bus-voltage-goes-low
+  :parameters ( ?l - line ?b - bus ?lvl - low_level ?b-1 - bus ?lvl-1 - low_level ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-4 ?o0 ?b-1 limit kv ?lvl-1) (pending ?o0))
+  :effect (and (line-voltage-low ?l) (bus-voltage-low ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-high-unexplained-1
+  :parameters ( ?l - line ?lvl - high_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit kv ?lvl) (pending ?o0))
+  :effect (and (line-voltage-high ?l) (observed ?o0) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-high-unexplained-2-bus-voltage-goes-high
+  :parameters ( ?l - line ?b - bus ?lvl - high_level ?b-1 - bus ?lvl-1 - high_level ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-4 ?o0 ?b-1 limit kv ?lvl-1) (pending ?o0))
+  :effect (and (line-voltage-high ?l) (bus-voltage-high ?b-1) (observed ?o0) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-normal-unexplained-1
+  :parameters ( ?l - line ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit kv normal) (pending ?o0))
+  :effect (and (line-voltage-normal ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-normal-unexplained-2-bus-voltage-goes-normal
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-4 ?o0 ?b-1 limit kv normal) (pending ?o0))
+  :effect (and (line-voltage-normal ?l) (bus-voltage-normal ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-to-zero-unexplained-1
+  :parameters ( ?l - line ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?l entered_zero_zone kv) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-to-zero-unexplained-2-bus-voltage-goes-to-zero
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-3 ?o0 ?b-1 entered_zero_zone kv) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-voltage-goes-low-when-isolated-1
+  :parameters ( ?l - line ?lvl - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit kv ?lvl) (pending ?o0))
+  :effect (and (line-voltage-low ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-low-when-isolated-2-bus-voltage-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv ?lvl-1) (pending ?o0))
+  :effect (and (line-voltage-low ?l) (bus-voltage-low ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-to-zero-when-isolated-1
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (matches-3 ?o0 ?l entered_zero_zone kv) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-to-zero-when-isolated-2-bus-voltage-goes-to-zero
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (static-true) (matches-3 ?o0 ?b-1 entered_zero_zone kv) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-low-when-re-energised-1
+  :parameters ( ?l - line ?lvl - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit kv ?lvl) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-low ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-low-when-re-energised-2-bus-voltage-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv ?lvl-1) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-low ?l) (bus-voltage-low ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-high-when-re-energised-1
+  :parameters ( ?l - line ?lvl - high_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit kv ?lvl) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-high ?l) (observed ?o0) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-high-when-re-energised-2-bus-voltage-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv ?lvl-1) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-high ?l) (bus-voltage-low ?b-1) (observed ?o0) (not (line-voltage-low ?l)) (not (line-voltage-normal ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-re-energised-1
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-re-energised-2-bus-voltage-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv ?lvl-1) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (bus-voltage-low ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-normal ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-out-1-1
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-voltage-high ?l) (capacitor-switched-out ?tag0) (matches-4 ?o0 ?l limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-out-1-2
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-voltage-unknown ?l) (capacitor-switched-out ?tag0) (matches-4 ?o0 ?l limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-out-2-1-bus-voltage-goes-normal
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-voltage-high ?l) (capacitor-switched-out ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (bus-voltage-normal ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-out-2-2-bus-voltage-goes-normal
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-voltage-unknown ?l) (capacitor-switched-out ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (bus-voltage-normal ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-in-1-1
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-voltage-low ?l) (capacitor-switched-in ?tag0) (matches-4 ?o0 ?l limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-in-1-2
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-voltage-unknown ?l) (capacitor-switched-in ?tag0) (matches-4 ?o0 ?l limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-in-2-1-bus-voltage-goes-normal
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-voltage-low ?l) (capacitor-switched-in ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (bus-voltage-normal ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-voltage-goes-normal-when-caps-in-2-2-bus-voltage-goes-normal
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-voltage-unknown ?l) (capacitor-switched-in ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit kv normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-voltage-normal ?l) (bus-voltage-normal ?b-1) (observed ?o0) (not (line-voltage-high ?l)) (not (line-voltage-low ?l)) (not (line-voltage-unknown ?l)) (not (bus-voltage-low ?b-1)) (not (bus-voltage-high ?b-1)) (not (bus-voltage-unknown ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-low-unexplained-1
+  :parameters ( ?l - line ?lvl - low_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit mw ?lvl) (pending ?o0))
+  :effect (and (line-mw-low ?l) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-normal ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-low-unexplained-2-bus-mw-goes-low
+  :parameters ( ?l - line ?b - bus ?lvl - low_level ?b-1 - bus ?lvl-1 - low_level ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-4 ?o0 ?b-1 limit mw ?lvl-1) (pending ?o0))
+  :effect (and (line-mw-low ?l) (bus-mw-low ?b-1) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-normal ?l)) (not (bus-mw-high ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-high-unexplained-1
+  :parameters ( ?l - line ?lvl - high_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit mw ?lvl) (pending ?o0))
+  :effect (and (line-mw-high ?l) (observed ?o0) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-high-unexplained-2-bus-mw-goes-high
+  :parameters ( ?l - line ?b - bus ?lvl - high_level ?b-1 - bus ?lvl-1 - high_level ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-4 ?o0 ?b-1 limit mw ?lvl-1) (pending ?o0))
+  :effect (and (line-mw-high ?l) (bus-mw-high ?b-1) (observed ?o0) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (bus-mw-low ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-normal-unexplained-1
+  :parameters ( ?l - line ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit mw normal) (pending ?o0))
+  :effect (and (line-mw-normal ?l) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-normal-unexplained-2-bus-mw-goes-normal
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-4 ?o0 ?b-1 limit mw normal) (pending ?o0))
+  :effect (and (line-mw-normal ?l) (bus-mw-normal ?b-1) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (bus-mw-low ?b-1)) (not (bus-mw-high ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-to-zero-unexplained-1
+  :parameters ( ?l - line ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?l entered_zero_zone mw) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-to-zero-unexplained-2-bus-mw-goes-to-zero
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (static-true) (matches-3 ?o0 ?b-1 entered_zero_zone mw) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (bus-mw-low ?b-1)) (not (bus-mw-high ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mw-goes-low-when-isolated-1
+  :parameters ( ?l - line ?lvl - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit mw ?lvl) (pending ?o0))
+  :effect (and (line-mw-low ?l) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-normal ?l)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-low-when-isolated-2-bus-mw-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit mw ?lvl-1) (pending ?o0))
+  :effect (and (line-mw-low ?l) (bus-mw-low ?b-1) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-normal ?l)) (not (bus-mw-high ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-to-zero-when-isolated-1
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (matches-3 ?o0 ?l entered_zero_zone mw) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-to-zero-when-isolated-2-bus-mw-goes-to-zero
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-isolated ?l) (line-iso-state-changed ?l ?tag0) (static-true) (matches-3 ?o0 ?b-1 entered_zero_zone mw) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (bus-mw-low ?b-1)) (not (bus-mw-high ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-low-when-re-energised-1
+  :parameters ( ?l - line ?lvl - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit mw ?lvl) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-mw-low ?l) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-normal ?l)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-low-when-re-energised-2-bus-mw-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit mw ?lvl-1) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-mw-low ?l) (bus-mw-low ?b-1) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-normal ?l)) (not (bus-mw-high ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-high-when-re-energised-1
+  :parameters ( ?l - line ?lvl - high_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit mw ?lvl) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-mw-high ?l) (observed ?o0) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-high-when-re-energised-2-bus-mw-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit mw ?lvl-1) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-mw-high ?l) (bus-mw-low ?b-1) (observed ?o0) (not (line-mw-low ?l)) (not (line-mw-normal ?l)) (not (bus-mw-high ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-normal-when-re-energised-1
+  :parameters ( ?l - line ?o0 - observation ?tag0 - observation)
+  :precondition (and (line-iso-state-changed ?l ?tag0) (matches-4 ?o0 ?l limit mw normal) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-mw-normal ?l) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (pending ?o0)))
+ )
+ (:action line-mw-goes-normal-when-re-energised-2-bus-mw-goes-low
+  :parameters ( ?l - line ?b - bus ?b-1 - bus ?lvl-1 - low_level ?o0 - observation ?tag0 - observation)
+  :precondition (and (= ?b-1 ?b) (adjacent ?l ?b) (line-iso-state-changed ?l ?tag0) (static-true) (matches-4 ?o0 ?b-1 limit mw ?lvl-1) (pending ?o0) (not-line-isolated ?l))
+  :effect (and (line-mw-normal ?l) (bus-mw-low ?b-1) (observed ?o0) (not (line-mw-high ?l)) (not (line-mw-low ?l)) (not (bus-mw-high ?b-1)) (not (bus-mw-normal ?b-1)) (not (pending ?o0)))
+ )
+ (:action line-mvar-goes-low-unexplained-1
+  :parameters ( ?l - line ?lvl - low_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit mvar ?lvl) (pending ?o0))
+  :effect (and (line-mvar-low ?l) (observed ?o0) (not (line-mvar-high ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mvar-goes-high-unexplained-1
+  :parameters ( ?l - line ?lvl - high_level ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit mvar ?lvl) (pending ?o0))
+  :effect (and (line-mvar-high ?l) (observed ?o0) (not (line-mvar-low ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mvar-goes-normal-unexplained-1
+  :parameters ( ?l - line ?o0 - observation)
+  :precondition (and (static-true) (matches-4 ?o0 ?l limit mvar normal) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-mvar-high ?l)) (not (line-mvar-low ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action line-mvar-goes-to-zero-unexplained-1
+  :parameters ( ?l - line ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?l entered_zero_zone mvar) (pending ?o0))
+  :effect (and (observed ?o0) (not (line-mvar-high ?l)) (not (line-mvar-low ?l)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action generator-init-status-was-on
+  :parameters ( ?g - generator)
+  :precondition (and (generator-status-is-unknown ?g))
+  :effect (and (generator-status-is-on ?g) (not (generator-status-is-unknown ?g)))
+ )
+ (:action generator-init-status-was-off
+  :parameters ( ?g - generator)
+  :precondition (and (generator-status-is-unknown ?g))
+  :effect (and (generator-status-is-off ?g) (not (generator-status-is-unknown ?g)))
+ )
+ (:action generator-begin-shutdown
+  :parameters ( ?g - generator)
+  :precondition (and (generator-status-is-on ?g))
+  :effect (and (generator-status-is-shutting-down ?g) (not (generator-status-is-on ?g)) (increase (total-cost) 1))
+ )
+ (:action generator-shutdown-turn-off
+  :parameters ( ?g - generator ?o0 - observation)
+  :precondition (and (generator-status-is-shutting-down ?g) (matches-3 ?o0 ?g unit_status off) (pending ?o0))
+  :effect (and (observed ?o0) (not (pending ?o0)))
+ )
+ (:action generator-shutdown-complete
+  :parameters ( ?g - generator)
+  :precondition (and (generator-status-is-shutting-down ?g))
+  :effect (and (generator-status-is-off ?g) (not (generator-status-is-shutting-down ?g)))
+ )
+ (:action generator-begin-startup
+  :parameters ( ?g - generator)
+  :precondition (and (generator-status-is-off ?g))
+  :effect (and (generator-status-is-starting-up ?g) (not (generator-status-is-on ?g)) (increase (total-cost) 1))
+ )
+ (:action generator-startup-turn-on
+  :parameters ( ?g - generator ?o0 - observation)
+  :precondition (and (generator-status-is-starting-up ?g) (matches-3 ?o0 ?g unit_status on) (pending ?o0))
+  :effect (and (observed ?o0) (not (pending ?o0)))
+ )
+ (:action generator-startup-complete
+  :parameters ( ?g - generator)
+  :precondition (and (generator-status-is-starting-up ?g))
+  :effect (and (generator-status-is-on ?g) (not (generator-status-is-starting-up ?g)))
+ )
+ (:action generator-runback-alarm
+  :parameters ( ?g - generator ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?g runback alarm) (pending ?o0))
+  :effect (and (generator-runback ?g) (observed ?o0) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action generator-runback-alarm-reset
+  :parameters ( ?g - generator ?o0 - observation)
+  :precondition (and (static-true) (matches-3 ?o0 ?g runback reset) (pending ?o0))
+  :effect (and (observed ?o0) (not (generator-runback ?g)) (not (pending ?o0)) (increase (total-cost) 1))
+ )
+ (:action generator-runback-reset-when-off
+  :parameters ( ?g - generator ?o0 - observation)
+  :precondition (and (generator-status-is-off ?g) (matches-3 ?o0 ?g runback reset) (pending ?o0))
+  :effect (and (observed ?o0) (not (generator-runback ?g)) (not (pending ?o0)))
+ )
+ (:action advance-to-obs0
+  :parameters ()
+  :precondition (and (future obs2544))
+  :effect (and (pending obs2544) (not (future obs2544)))
+ )
+ (:action advance-to-obs1
+  :parameters ()
+  :precondition (and (future obs2545) (observed obs2544))
+  :effect (and (pending obs2545) (not (future obs2545)))
+ )
+ (:action advance-to-obs2
+  :parameters ()
+  :precondition (and (future obs2546) (observed obs2545) (not-line-iso-trip-in-progress line_x5_x6 obs2544) (not-line-iso-trip-in-progress line_x19_x20 obs2544) (not-line-iso-trip-in-progress line_x5_x6 obs2545) (not-line-iso-trip-in-progress line_x19_x20 obs2545))
+  :effect (and (pending obs2546) (not (future obs2546)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2544)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2544)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2544)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2544)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2544)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2544)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2544)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2544)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2544)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2544)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2544)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2545)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2545)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2545)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2545)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2545)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2545)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2545)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2545)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2545)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2545)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2545)))
+ )
+ (:action advance-to-obs3
+  :parameters ()
+  :precondition (and (future obs2547) (observed obs2546) (not-line-iso-trip-in-progress line_x5_x6 obs2546) (not-line-iso-trip-in-progress line_x19_x20 obs2546))
+  :effect (and (pending obs2547) (not (future obs2547)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2546)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2546)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2546)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2546)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2546)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2546)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2546)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2546)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2546)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2546)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2546)))
+ )
+ (:action advance-to-obs4
+  :parameters ()
+  :precondition (and (future obs2548) (observed obs2546) (not-line-iso-trip-in-progress line_x5_x6 obs2546) (not-line-iso-trip-in-progress line_x19_x20 obs2546))
+  :effect (and (pending obs2548) (not (future obs2548)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2546)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2546)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2546)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2546)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2546)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2546)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2546)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2546)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2546)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2546)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2546)))
+ )
+ (:action advance-to-obs5
+  :parameters ()
+  :precondition (and (future obs2549) (observed obs2546) (not-line-iso-trip-in-progress line_x5_x6 obs2546) (not-line-iso-trip-in-progress line_x19_x20 obs2546))
+  :effect (and (pending obs2549) (not (future obs2549)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2546)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2546)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2546)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2546)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2546)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2546)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2546)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2546)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2546)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2546)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2546)))
+ )
+ (:action advance-to-obs6
+  :parameters ()
+  :precondition (and (future obs2550) (observed obs2547) (observed obs2548) (observed obs2549) (not-line-iso-trip-in-progress line_x5_x6 obs2547) (not-line-iso-trip-in-progress line_x19_x20 obs2547) (not-line-iso-trip-in-progress line_x5_x6 obs2548) (not-line-iso-trip-in-progress line_x19_x20 obs2548) (not-line-iso-trip-in-progress line_x5_x6 obs2549) (not-line-iso-trip-in-progress line_x19_x20 obs2549))
+  :effect (and (pending obs2550) (not (future obs2550)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2547)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2547)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2547)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2547)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2547)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2547)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2547)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2547)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2547)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2547)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2547)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2548)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2548)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2548)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2548)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2548)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2548)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2548)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2548)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2548)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2548)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2548)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2549)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2549)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2549)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2549)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2549)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2549)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2549)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2549)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2549)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2549)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2549)) (not (line-iso-state-may-have-changed line_x5_x6 obs2544)) (not (line-iso-state-may-have-changed line_x19_x20 obs2544)) (not (line-iso-state-may-have-changed line_x5_x6 obs2545)) (not (line-iso-state-may-have-changed line_x19_x20 obs2545)) (not (line-iso-state-changed line_x5_x6 obs2544)) (not (line-iso-state-changed line_x19_x20 obs2544)) (not (line-iso-state-changed line_x5_x6 obs2545)) (not (line-iso-state-changed line_x19_x20 obs2545)) (not (capacitor-switched-in obs2544)) (not (capacitor-switched-in obs2545)) (not (capacitor-switched-out obs2544)) (not (capacitor-switched-out obs2545)))
+ )
+ (:action advance-to-obs7
+  :parameters ()
+  :precondition (and (future obs2551) (observed obs2550) (not-line-iso-trip-in-progress line_x5_x6 obs2550) (not-line-iso-trip-in-progress line_x19_x20 obs2550))
+  :effect (and (pending obs2551) (not (future obs2551)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2550)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2550)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2550)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2550)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2550)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2550)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2550)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2550)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2550)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2550)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2550)))
+ )
+ (:action advance-to-obs8
+  :parameters ()
+  :precondition (and (future obs2552) (observed obs2551))
+  :effect (and (pending obs2552) (not (future obs2552)))
+ )
+ (:action advance-to-obs9
+  :parameters ()
+  :precondition (and (future obs2553) (observed obs2552) (not-line-iso-trip-in-progress line_x5_x6 obs2551) (not-line-iso-trip-in-progress line_x19_x20 obs2551) (not-line-iso-trip-in-progress line_x5_x6 obs2552) (not-line-iso-trip-in-progress line_x19_x20 obs2552))
+  :effect (and (pending obs2553) (not (future obs2553)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2551)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2551)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2551)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2551)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2551)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2551)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2551)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2551)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2551)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2551)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2551)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2552)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2552)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2552)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2552)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2552)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2552)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2552)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2552)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2552)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2552)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2552)))
+ )
+ (:action advance-to-obs10
+  :parameters ()
+  :precondition (and (future obs2554) (observed obs2552) (not-line-iso-trip-in-progress line_x5_x6 obs2551) (not-line-iso-trip-in-progress line_x19_x20 obs2551) (not-line-iso-trip-in-progress line_x5_x6 obs2552) (not-line-iso-trip-in-progress line_x19_x20 obs2552))
+  :effect (and (pending obs2554) (not (future obs2554)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2551)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2551)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2551)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2551)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2551)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2551)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2551)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2551)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2551)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2551)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2551)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2552)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2552)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2552)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2552)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2552)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2552)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2552)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2552)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2552)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2552)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2552)))
+ )
+ (:action advance-to-obs11
+  :parameters ()
+  :precondition (and (future obs2555) (observed obs2553) (observed obs2554) (not-line-iso-trip-in-progress line_x5_x6 obs2553) (not-line-iso-trip-in-progress line_x19_x20 obs2553) (not-line-iso-trip-in-progress line_x5_x6 obs2554) (not-line-iso-trip-in-progress line_x19_x20 obs2554))
+  :effect (and (pending obs2555) (not (future obs2555)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2553)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2553)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2553)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2553)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2553)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2553)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2553)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2553)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2553)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2553)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2553)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2554)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2554)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2554)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2554)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2554)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2554)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2554)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2554)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2554)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2554)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2554)))
+ )
+ (:action advance-to-obs12
+  :parameters ()
+  :precondition (and (future obs2556) (observed obs2555) (not-line-iso-trip-in-progress line_x5_x6 obs2555) (not-line-iso-trip-in-progress line_x19_x20 obs2555))
+  :effect (and (pending obs2556) (not (future obs2556)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2555)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2555)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2555)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2555)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2555)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2555)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2555)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2555)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2555)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2555)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2555)) (not (line-iso-state-may-have-changed line_x5_x6 obs2546)) (not (line-iso-state-may-have-changed line_x19_x20 obs2546)) (not (line-iso-state-may-have-changed line_x5_x6 obs2547)) (not (line-iso-state-may-have-changed line_x19_x20 obs2547)) (not (line-iso-state-may-have-changed line_x5_x6 obs2548)) (not (line-iso-state-may-have-changed line_x19_x20 obs2548)) (not (line-iso-state-may-have-changed line_x5_x6 obs2549)) (not (line-iso-state-may-have-changed line_x19_x20 obs2549)) (not (line-iso-state-changed line_x5_x6 obs2546)) (not (line-iso-state-changed line_x19_x20 obs2546)) (not (line-iso-state-changed line_x5_x6 obs2547)) (not (line-iso-state-changed line_x19_x20 obs2547)) (not (line-iso-state-changed line_x5_x6 obs2548)) (not (line-iso-state-changed line_x19_x20 obs2548)) (not (line-iso-state-changed line_x5_x6 obs2549)) (not (line-iso-state-changed line_x19_x20 obs2549)) (not (capacitor-switched-in obs2546)) (not (capacitor-switched-in obs2547)) (not (capacitor-switched-in obs2548)) (not (capacitor-switched-in obs2549)) (not (capacitor-switched-out obs2546)) (not (capacitor-switched-out obs2547)) (not (capacitor-switched-out obs2548)) (not (capacitor-switched-out obs2549)))
+ )
+ (:action advance-to-obs13
+  :parameters ()
+  :precondition (and (future obs2557) (observed obs2555) (not-line-iso-trip-in-progress line_x5_x6 obs2555) (not-line-iso-trip-in-progress line_x19_x20 obs2555))
+  :effect (and (pending obs2557) (not (future obs2557)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2555)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2555)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2555)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2555)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2555)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2555)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2555)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2555)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2555)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2555)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2555)) (not (line-iso-state-may-have-changed line_x5_x6 obs2546)) (not (line-iso-state-may-have-changed line_x19_x20 obs2546)) (not (line-iso-state-may-have-changed line_x5_x6 obs2547)) (not (line-iso-state-may-have-changed line_x19_x20 obs2547)) (not (line-iso-state-may-have-changed line_x5_x6 obs2548)) (not (line-iso-state-may-have-changed line_x19_x20 obs2548)) (not (line-iso-state-may-have-changed line_x5_x6 obs2549)) (not (line-iso-state-may-have-changed line_x19_x20 obs2549)) (not (line-iso-state-changed line_x5_x6 obs2546)) (not (line-iso-state-changed line_x19_x20 obs2546)) (not (line-iso-state-changed line_x5_x6 obs2547)) (not (line-iso-state-changed line_x19_x20 obs2547)) (not (line-iso-state-changed line_x5_x6 obs2548)) (not (line-iso-state-changed line_x19_x20 obs2548)) (not (line-iso-state-changed line_x5_x6 obs2549)) (not (line-iso-state-changed line_x19_x20 obs2549)) (not (capacitor-switched-in obs2546)) (not (capacitor-switched-in obs2547)) (not (capacitor-switched-in obs2548)) (not (capacitor-switched-in obs2549)) (not (capacitor-switched-out obs2546)) (not (capacitor-switched-out obs2547)) (not (capacitor-switched-out obs2548)) (not (capacitor-switched-out obs2549)))
+ )
+ (:action advance-to-obs14
+  :parameters ()
+  :precondition (and (future obs2558) (observed obs2556) (observed obs2557) (not-line-iso-trip-in-progress line_x5_x6 obs2556) (not-line-iso-trip-in-progress line_x19_x20 obs2556) (not-line-iso-trip-in-progress line_x5_x6 obs2557) (not-line-iso-trip-in-progress line_x19_x20 obs2557))
+  :effect (and (pending obs2558) (not (future obs2558)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2556)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2556)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2556)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2556)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2556)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2556)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2556)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2556)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2556)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2556)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2556)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2557)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2557)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2557)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2557)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2557)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2557)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2557)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2557)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2557)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2557)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2557)) (not (line-iso-state-may-have-changed line_x5_x6 obs2550)) (not (line-iso-state-may-have-changed line_x19_x20 obs2550)) (not (line-iso-state-may-have-changed line_x5_x6 obs2551)) (not (line-iso-state-may-have-changed line_x19_x20 obs2551)) (not (line-iso-state-changed line_x5_x6 obs2550)) (not (line-iso-state-changed line_x19_x20 obs2550)) (not (line-iso-state-changed line_x5_x6 obs2551)) (not (line-iso-state-changed line_x19_x20 obs2551)) (not (capacitor-switched-in obs2550)) (not (capacitor-switched-in obs2551)) (not (capacitor-switched-out obs2550)) (not (capacitor-switched-out obs2551)))
+ )
+ (:action advance-to-obs15
+  :parameters ()
+  :precondition (and (future obs2559) (observed obs2558))
+  :effect (and (pending obs2559) (not (future obs2559)) (not (line-iso-state-may-have-changed line_x5_x6 obs2552)) (not (line-iso-state-may-have-changed line_x19_x20 obs2552)) (not (line-iso-state-changed line_x5_x6 obs2552)) (not (line-iso-state-changed line_x19_x20 obs2552)) (not (capacitor-switched-in obs2552)) (not (capacitor-switched-out obs2552)))
+ )
+ (:action advance-to-obs16
+  :parameters ()
+  :precondition (and (future obs2560) (observed obs2559) (not-line-iso-trip-in-progress line_x5_x6 obs2558) (not-line-iso-trip-in-progress line_x19_x20 obs2558))
+  :effect (and (pending obs2560) (not (future obs2560)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2558)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2558)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2558)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2558)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2558)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2558)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2558)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2558)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2558)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2558)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2558)))
+ )
+ (:action advance-to-obs17
+  :parameters ()
+  :precondition (and (future obs2561) (observed obs2559) (not-line-iso-trip-in-progress line_x5_x6 obs2558) (not-line-iso-trip-in-progress line_x19_x20 obs2558))
+  :effect (and (pending obs2561) (not (future obs2561)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2558)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2558)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2558)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2558)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2558)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2558)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2558)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2558)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2558)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2558)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2558)))
+ )
+ (:action advance-to-obs18
+  :parameters ()
+  :precondition (and (future obs2562) (observed obs2560) (observed obs2561) (not-line-iso-trip-in-progress line_x5_x6 obs2559) (not-line-iso-trip-in-progress line_x19_x20 obs2559))
+  :effect (and (pending obs2562) (not (future obs2562)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2559)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2559)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2559)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2559)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2559)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2559)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2559)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2559)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2559)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2559)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2559)) (not (line-iso-state-may-have-changed line_x5_x6 obs2553)) (not (line-iso-state-may-have-changed line_x19_x20 obs2553)) (not (line-iso-state-may-have-changed line_x5_x6 obs2554)) (not (line-iso-state-may-have-changed line_x19_x20 obs2554)) (not (line-iso-state-changed line_x5_x6 obs2553)) (not (line-iso-state-changed line_x19_x20 obs2553)) (not (line-iso-state-changed line_x5_x6 obs2554)) (not (line-iso-state-changed line_x19_x20 obs2554)) (not (capacitor-switched-in obs2553)) (not (capacitor-switched-in obs2554)) (not (capacitor-switched-out obs2553)) (not (capacitor-switched-out obs2554)))
+ )
+ (:action advance-to-obs19
+  :parameters ()
+  :precondition (and (future obs2563) (observed obs2562) (not-line-iso-trip-in-progress line_x5_x6 obs2560) (not-line-iso-trip-in-progress line_x19_x20 obs2560) (not-line-iso-trip-in-progress line_x5_x6 obs2561) (not-line-iso-trip-in-progress line_x19_x20 obs2561) (not-line-iso-trip-in-progress line_x5_x6 obs2562) (not-line-iso-trip-in-progress line_x19_x20 obs2562))
+  :effect (and (pending obs2563) (not (future obs2563)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2560)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2560)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2560)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2560)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2560)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2560)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2560)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2560)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2560)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2560)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2560)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2561)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2561)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2561)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2561)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2561)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2561)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2561)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2561)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2561)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2561)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2561)) (not (breaker-auto-reopen-wait breaker_x1_x2 obs2562)) (not (breaker-auto-reopen-wait breaker_x3_x4 obs2562)) (not (breaker-auto-reopen-wait breaker_x7_x8 obs2562)) (not (breaker-auto-reopen-wait breaker_x9_x10 obs2562)) (not (breaker-auto-reopen-wait breaker_x11_x12 obs2562)) (not (breaker-auto-reopen-wait breaker_x13_x14 obs2562)) (not (breaker-auto-reopen-wait breaker_x15_x16 obs2562)) (not (breaker-auto-reopen-wait breaker_x21_x22 obs2562)) (not (breaker-auto-reopen-wait breaker_x23_x24 obs2562)) (not (breaker-auto-reopen-wait breaker_x25_x26 obs2562)) (not (breaker-auto-reopen-wait breaker_x27_x18 obs2562)) (not (line-iso-state-may-have-changed line_x5_x6 obs2555)) (not (line-iso-state-may-have-changed line_x19_x20 obs2555)) (not (line-iso-state-changed line_x5_x6 obs2555)) (not (line-iso-state-changed line_x19_x20 obs2555)) (not (capacitor-switched-in obs2555)) (not (capacitor-switched-out obs2555)))
+ )
+)
